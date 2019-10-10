@@ -316,6 +316,9 @@ if (executed_tz == true && executed_olx == false && executed_redirect == true ) 
            waitForElementsReadyAndUpload( '#add-file-1 a', 1000 );
            waitForUploadReady( 1000 );
         }
+        else{
+           olx_ready++;
+        }
 
 
 
