@@ -48,6 +48,33 @@
 
 
 
+
+
+    //// test function for get value and value change listener ////
+
+ if( window.location.href.indexOf( 'Regulamin-Newsletter-SMS' ) > -1 ){
+
+ GM_setValue("abc",123);
+ console.log(GM_getValue("abc"));
+ GM_addValueChangeListener("abc", function() {
+     console.log(arguments);
+     console.log(GM_getValue("abc"));
+ });
+
+GM_setValue("abc",2222);
+ console.log(GM_getValue("abc"));
+
+ }
+
+    //// test function for get value and value change listener ////
+
+
+
+
+
+
+
+
 if ( executed_redirect == false ) {
 
     // run script and go to product page
