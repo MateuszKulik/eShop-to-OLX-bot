@@ -31,6 +31,7 @@
      var olx_temp1 = false;
      var olx_temp2 = false;
      var olx_temp3 = false;
+     var olx_ready = 0;
 
 
     //init GM values
@@ -177,7 +178,7 @@ if ( executed_tz == false && executed_redirect == true ) {
 
 
 
-if (executed_tz == true & executed_olx == false ) {
+if (executed_tz == true && executed_olx == false ) {
 
         //////// OLX PAGE ////////
 
@@ -193,27 +194,27 @@ if (executed_tz == true & executed_olx == false ) {
 
 
     if( win_location_olx == url_olx_add){
-       document.getElementById( 'add-title' ).value = GM_getValue('title');
-       document.getElementById( 'add-description' ).value = GM_getValue('descr');
+       document.getElementById( 'add-title' ).value = GM_getValue( 'title' );
+       olx_ready++;
+       document.getElementById( 'add-description' ).value = GM_getValue( 'descr' );
+       olx_ready++;
        document.getElementById( 'add-phone' ).value = '533 111 477';
+       olx_ready++;
        document.getElementById('targetrenderSelect1-0').click();
-
-
 
 
 
         // function for wait for element and click it
 
-        function waitForElementToDisplayAndClick(selector, time) {
-        if(document.querySelector(selector)!=null) {
-            document.querySelector(selector).click();
-            console.log(document.querySelector(selector));
+        function waitForElementToDisplayAndClick( selector, time ) {
+        if( document.querySelector( selector )!= null) {
+            document.querySelector( selector ).click();
             return;
         }
         else {
-            setTimeout(function() {
-                waitForElementToDisplayAndClick(selector, time);
-            }, time);
+            setTimeout( function() {
+                waitForElementToDisplayAndClick( selector, time );
+            }, time );
         }
     }
 
@@ -221,47 +222,49 @@ if (executed_tz == true & executed_olx == false ) {
           // function for wait for price element and input value
 
         function waitForPrice(selector, time) {
-        if(document.querySelector(selector)!=null) {
-            document.querySelector(selector).value = GM_getValue('price');
+        if(document.querySelector( selector )!= null) {
+            document.querySelector( selector ).value = GM_getValue( 'price' );
             olx_temp1 = true;
+            olx_ready++;
             return;
         }
         else {
-            setTimeout(function() {
-                waitForPrice(selector, time);
-            }, time);
+            setTimeout( function() {
+                waitForPrice( selector, time );
+            }, time );
         }
     }
 
 
-         // function for wait for type of the offer  input value
+         // function for wait for type of the offer and clik to show options
 
-        function waitForOfferType(selector, time) {
+        function waitForOfferType( selector, time ) {
         if( olx_temp1 == true ) {
-            document.querySelector(selector).click();
+            document.querySelector( selector ).click();
             olx_temp2 = true;
             return;
         }
         else {
-            setTimeout(function() {
-                waitForOfferType(selector, time);
+            setTimeout( function() {
+                waitForOfferType( selector, time );
             }, time);
         }
     }
 
 
 
-        // function for wait for type of the offer  input value
+        // function for wait for type of the offer and choose business
 
-        function waitForOfferTypeBusiness(selector, time) {
+        function waitForOfferTypeBusiness( selector, time ) {
         if(olx_temp2 == true) {
-            document.querySelectorAll(selector)[2].click();
+            document.querySelectorAll( selector )[3].click();
             olx_temp3 = true;
+            olx_ready++;
             return;
         }
         else {
-            setTimeout(function() {
-                waitForOfferTypeBusiness(selector, time);
+            setTimeout( function() {
+                waitForOfferTypeBusiness( selector, time );
             }, time);
         }
     }
@@ -269,26 +272,66 @@ if (executed_tz == true & executed_olx == false ) {
 
           // function for wait for element and upload
 
-        function waitForElementToDisplayAndUpload(selector, time) {
-        if(olx_temp3 == true) {
-            document.querySelector(selector).click();
-            console.log(document.querySelector(selector));
+        function waitForElementToDisplayAndUpload(selector, time ) {
+        if( olx_temp3 == true ) {
+            document.querySelector( selector ).click();
             return;
         }
         else {
-            setTimeout(function() {
-                waitForElementToDisplayAndUpload(selector, time);
-            }, time);
+            setTimeout( function() {
+                waitForElementToDisplayAndUpload( selector, time );
+            }, time );
         }
     }
 
+        function waitForOfferReady( time ) {
+           console.log(olx_ready);
+           if( olx_ready == 5 ){
+              waitForElementToDisplayAndClick( '#save', 1000 );
+              return;
+           }
+           else {
+              setTimeout( function() {
+                 waitForOfferReady( time );
+               }, time );
+           }
+        }
 
-        waitForElementToDisplayAndClick('.cat-icon-757', 1000);
-        waitForElementToDisplayAndClick('[data-category="765"]', 2000);
-        waitForPrice('.paramPriceInput', 1000);
-        waitForOfferType('#targetid_private_business a', 1000);
-        waitForOfferTypeBusiness('#targetid_private_business a', 1000);
-        waitForElementToDisplayAndUpload('#add-file-1 a', 1000);
+
+
+
+        waitForElementToDisplayAndClick( '.cat-icon-757', 1000 );
+        waitForElementToDisplayAndClick( '[data-category="765"]', 2000 );
+        waitForPrice( '.paramPriceInput', 1000 );
+        waitForOfferType( '#targetid_private_business a', 1000 );
+        waitForOfferTypeBusiness( '#targetid_private_business a', 1000 );
+
+
+
+           if( no_image_test == false ) {
+           waitForElementToDisplayAndUpload( '#add-file-1 a', 1000 );
+            if( true == true ) {
+               olx_ready++;
+               return
+            }
+        }
+        else{
+            if( olx_ready == 2 ) {
+               olx_ready++;
+               return
+            }
+        }
+
+
+
+        //waitForOfferReady( 1000 );
+
+
+
+
+
+
+
 
 
 
