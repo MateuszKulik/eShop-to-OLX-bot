@@ -9,6 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_deleteValue
 // @grant        GM_setClipboard
+// @grant        GM_openInTab
 // @grant        GM_addValueChangeListener
 // @grant        unsafeWindow
 // @grant        window.close
@@ -19,52 +20,54 @@
     'use strict';
 
 
-
-
-     //init declarations
-     var url_tz = 'https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278';
-     var win_location_olx = null;
-     var win_location_tz = null;
-     var url_olx_add = 'https://www.olx.pl/nowe-ogloszenie/';
-     var executed_tz = false;
-     var executed_olx = false;
-     var executed_redirect = false;
-     var olx_temp1 = false;
-     var olx_temp2 = false;
-     var olx_temp3 = false;
-     var olx_temp4 = false;
-     var olx_ready = 0;
-
-
-    //init GM values
+     //init GM values
      if( window.location.href.indexOf( 'Regulamin-Newsletter-SMS' ) > -1 ){
         GM_setValue('price', '');
         GM_setValue('title', '');
         GM_setValue('descr', '');
         GM_setValue('img_file', '');
         GM_setValue( 'pro_img', 'false' );
- }
+        var i = 0;
+     }
+     var url_tz;
+     var products_tz = ['https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278', 'https://www.twojazagroda.pl/pl/p/Glowka-kosy-ECO/1304', 'https://www.twojazagroda.pl/pl/p/AGREGAT-PRADOTWORCZY-ESE-3200-P-2800W-230V/2745'];
 
 
-
-
-if ( executed_redirect == false ) {
+    url_tz = products_tz[i];
 
     // run script and go to product page
     if( window.location.href.indexOf( 'Regulamin-Newsletter-SMS' ) > -1 ){
-     window.open( url_tz , '_blank' );
+        window.open( url_tz , '_blank' );
     }
 
+
+    if( window.location.href.indexOf( '/pl/p/' ) > -1 ){
+        twojazagroda();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+function twojazagroda(){
+
+    var win_location_tz = null;
     win_location_tz = window.location.href;
-    executed_redirect = true;
-}
 
 
-if ( executed_tz == false && executed_redirect == true ) {
 
     //////// PRODUCT PAGE ////////
 
-
+console.log(win_location_tz +' aktualna lokalizacja');
+    console.log(url_tz +' lokalizacja produktu');
 
     // if on product page
     if( win_location_tz == url_tz ){
@@ -150,30 +153,35 @@ if ( executed_tz == false && executed_redirect == true ) {
   //  console.log( elementp );
 
 
-    // close page with product
-   // window.close();
 
     // done product scrpaping
     product_scrap = 1;
 
+ 
  }
 
-        executed_tz = true;
 
+    // end function twojazagroda
 }
 
 
 
-if (executed_tz == true && executed_olx == false && executed_redirect == true ) {
 
-        //////// OLX PAGE ////////
+function olx(){
 
-    if ( product_scrap == true ){
-       // open OLX page
-       window.open( url_olx_add , '_blank' );
-        // reset product scrape variable
-        product_scrap = false;
-        }
+      // open OLX page
+      var url_olx_add = 'https://www.olx.pl/nowe-ogloszenie/';
+      window.open( url_olx_add , '_blank' );
+
+                //////// OLX PAGE ////////
+
+     var url_olx_add = 'https://www.olx.pl/nowe-ogloszenie/';
+     var olx_temp1 = false;
+     var olx_temp2 = false;
+     var olx_temp3 = false;
+     var olx_temp4 = false;
+     var olx_ready = 0;
+     var win_location_olx = null;
 
         win_location_olx = window.location.href;
 
@@ -292,7 +300,7 @@ if (executed_tz == true && executed_olx == false && executed_redirect == true ) 
         function waitForOfferReady( time ) {
            console.log(olx_ready);
            if( olx_ready == 6 ){
-              waitForElementToDisplayAndClick( '#save', 1000 );
+             // waitForElementToDisplayAndClick( '#save', 1000 );
               return;
            }
            else {
@@ -321,28 +329,15 @@ if (executed_tz == true && executed_olx == false && executed_redirect == true ) 
         }
 
 
+         waitForOfferReady( 1000 );
 
 
-        // waitForOfferReady( 1000 );
-
-
-
-
-
-
-
-
-
-
+//end if lokalizacja olx
 
     }
 
-  executed_olx = true;
+  //end of olx function
 }
-
-
-
-
 
 
 
