@@ -31,51 +31,40 @@
         GM_setValue( 'OLX_ready', '' );
         var i = 0;
      }
+     // init values
      var url_tz;
+     // products array
      var products_tz = ['https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278', 'https://www.twojazagroda.pl/pl/p/AGREGAT-PRADOTWORCZY-ESE-3200-P-2800W-230V/2745', 'https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278'];
 
 
 
 
-
+// main page for script launch - https://www.twojazagroda.pl/pl/i/Regulamin-Newsletter-SMS/27
 
  if( window.location.href.indexOf( 'Regulamin-Newsletter-SMS' ) > -1 ){
 
 
-
+     //first init open product page
      url_tz = products_tz[i];
      GM_setValue( 'url_tz', url_tz );
      // go to product page
      var tz_tab = window.open( url_tz , '_blank' );
 
 
-
+     // event listener for OLX_ready variable
      GM_addValueChangeListener("OLX_ready", function() {
-         if( GM_getValue( 'OLX_ready' ) == 1 ){
+         // if  yes then product is done and can go to another one
+         if( GM_getValue( 'OLX_ready' ) == '1' ) {
              i++;
-             url_tz = products_tz[i];
-             GM_setValue( 'url_tz', url_tz );
-             // go to product page
-             var tz_tab = window.open( url_tz , '_blank' );
-             console.log(GM_getValue( 'OLX_ready' ));
+             // if there are products to scrape
+             if ( i != products_tz.length ) {
+                 url_tz = products_tz[ i ];
+                 GM_setValue( 'url_tz', url_tz );
+                 // go to another product page
+                 var tz_tab = window.open( url_tz , '_blank' );
+             }
          }
        });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     }
@@ -84,15 +73,17 @@
 
 function twojazagroda(){
 
-    var win_location_tz = null;
-    win_location_tz = window.location.href;
-    GM_setValue( 'OLX_ready', '0' );
-
-
     //////// PRODUCT PAGE ////////
 
-    console.log(win_location_tz +' aktualna lokalizacja');
-    console.log(GM_getValue( 'url_tz' ) +' lokalizacja produktu');
+    var win_location_tz = null;
+    win_location_tz = window.location.href;
+
+    // reset variable for product ready - event listener for OLX_ready
+    GM_setValue( 'OLX_ready', '0' );
+
+    // debug console.logs
+    // console.log(win_location_tz +' aktualna lokalizacja');
+    // console.log(GM_getValue( 'url_tz' ) +' lokalizacja produktu');
 
     // if on product page
     if( win_location_tz == GM_getValue( 'url_tz' ) ){
@@ -108,9 +99,6 @@ function twojazagroda(){
     var img_name = 'Produkt_zdjecie_TZ' + temp_name;
     var no_image_test = /overlay/.test(img_url);
     var product_scrap = false;
-
-
-
 
 
     // for each loop change name +1
@@ -142,7 +130,7 @@ function twojazagroda(){
       elementp = elementp.split( '<br>' ).join( ' ' );
     }
     else {
-        // if doesn't have
+        // if doesn't have add general info
       elementp = 'Wszystkie szczegóły dostępne po kontakcie telefonicznym';
     }
 
@@ -166,7 +154,7 @@ function twojazagroda(){
 
 
 
-    // console logs for testing
+    // console logs for debug
 
     //  console.log( title );
     //  console.log( price );
@@ -181,16 +169,16 @@ function twojazagroda(){
 
     // open OLX page
     var url_olx_add = 'https://www.olx.pl/nowe-ogloszenie/';
+    window.close();
     window.open( url_olx_add , '_blank' );
 
  }
 
-
     // end function twojazagroda
 }
 
-
-    twojazagroda();
+// call function
+twojazagroda();
 
 
 
@@ -201,8 +189,9 @@ function olx(){
 
 
      // set OLX page
-      var url_olx_add = 'https://www.olx.pl/nowe-ogloszenie/';
+     var url_olx_add = 'https://www.olx.pl/nowe-ogloszenie/';
 
+     // temp variables
      var olx_temp1 = false;
      var olx_temp2 = false;
      var olx_temp3 = false;
@@ -210,11 +199,14 @@ function olx(){
      var olx_ready = 0;
      var win_location_olx = null;
 
+     // get acutal location
      win_location_olx = window.location.href;
-     console.log(win_location_olx +' loklaizacja aktualna');
-     console.log(url_olx_add +' loklaizacja olx');
 
+     // console logs for debug
+     //console.log(win_location_olx +' loklaizacja aktualna');
+     //console.log(url_olx_add +' loklaizacja olx');
 
+    // if at OLX page
     if( win_location_olx == url_olx_add){
        document.getElementById( 'add-title' ).value = GM_getValue( 'title' );
        olx_ready++;
@@ -307,7 +299,7 @@ function olx(){
         }
     }
 
-
+        // function for wait for upload ready
 
         function waitForUploadReady( time ) {
            if( olx_temp4 == true && document.querySelector( '.photos-show-mini #add-img-1' ) != null ){
@@ -323,17 +315,19 @@ function olx(){
 
 
 
-
+        // function for product added and complete
 
         function waitForOfferReady( time ) {
-           console.log( olx_ready );
+           // console log for debug
+           // console.log( olx_ready );
+           // check if all steps of product adding to OLX are done (done number is 6)
            if( olx_ready == 6 ){
              // waitForElementToDisplayAndClick( '#save', 1000 );
              // dodac kolejne przejscie dalej dla dodanego ogloszenia
-             //window.close();
-             // window.close();
+             // set variable for product done scrapping and added to olx
              GM_setValue( 'OLX_ready', '1' );
-             console.log(GM_getValue( 'OLX_ready' ));
+             // console.log(GM_getValue( 'OLX_ready' ));
+             window.close();
              return;
            }
            else {
@@ -344,7 +338,7 @@ function olx(){
         }
 
 
-
+        // call functions for product paremeters
 
         waitForElementToDisplayAndClick( '.cat-icon-757', 1000 );
         waitForElementToDisplayAndClick( '[data-category="765"]', 2000 );
@@ -352,16 +346,17 @@ function olx(){
         waitForOfferType( '#targetid_private_business a', 1000 );
         waitForOfferTypeBusiness( '#targetid_private_business a', 1000 );
 
-
+        // if product has image
         if( GM_getValue('pro_img') == 'true' ) {
            waitForElementsReadyAndUpload( '#add-file-1 a', 1000 );
            waitForUploadReady( 1000 );
         }
         else{
+        // if doesn't have
            olx_ready++;
         }
 
-
+        // check if product is added to OLX
          waitForOfferReady( 1000 );
 
 
@@ -372,10 +367,9 @@ function olx(){
   //end of olx function
 }
 
+
+// call function for OLX
 olx();
-
-
-
 
 
 
