@@ -27,33 +27,58 @@
         GM_setValue('descr', '');
         GM_setValue('img_file', '');
         GM_setValue( 'pro_img', 'false' );
+        GM_setValue( 'url_tz', '' );
+        GM_setValue( 'OLX_ready', '' );
         var i = 0;
      }
      var url_tz;
-     var products_tz = ['https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278', 'https://www.twojazagroda.pl/pl/p/Glowka-kosy-ECO/1304', 'https://www.twojazagroda.pl/pl/p/AGREGAT-PRADOTWORCZY-ESE-3200-P-2800W-230V/2745'];
+     var products_tz = ['https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278', 'https://www.twojazagroda.pl/pl/p/AGREGAT-PRADOTWORCZY-ESE-3200-P-2800W-230V/2745', 'https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278'];
 
 
-    url_tz = products_tz[i];
 
-    // run script and go to product page
-    if( window.location.href.indexOf( 'Regulamin-Newsletter-SMS' ) > -1 ){
-        window.open( url_tz , '_blank' );
+
+
+
+ if( window.location.href.indexOf( 'Regulamin-Newsletter-SMS' ) > -1 ){
+
+
+
+     url_tz = products_tz[i];
+     GM_setValue( 'url_tz', url_tz );
+     // go to product page
+     var tz_tab = window.open( url_tz , '_blank' );
+
+
+
+     GM_addValueChangeListener("OLX_ready", function() {
+         if( GM_getValue( 'OLX_ready' ) == 1 ){
+             i++;
+             url_tz = products_tz[i];
+             GM_setValue( 'url_tz', url_tz );
+             // go to product page
+             var tz_tab = window.open( url_tz , '_blank' );
+             console.log(GM_getValue( 'OLX_ready' ));
+         }
+       });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
-
-
-    if( window.location.href.indexOf( '/pl/p/' ) > -1 ){
-        twojazagroda();
-    }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -61,16 +86,16 @@ function twojazagroda(){
 
     var win_location_tz = null;
     win_location_tz = window.location.href;
-
+    GM_setValue( 'OLX_ready', '0' );
 
 
     //////// PRODUCT PAGE ////////
 
-console.log(win_location_tz +' aktualna lokalizacja');
-    console.log(url_tz +' lokalizacja produktu');
+    console.log(win_location_tz +' aktualna lokalizacja');
+    console.log(GM_getValue( 'url_tz' ) +' lokalizacja produktu');
 
     // if on product page
-    if( win_location_tz == url_tz ){
+    if( win_location_tz == GM_getValue( 'url_tz' ) ){
 
     // init get values
     var title_raw = document.getElementsByClassName( 'name' )[0].innerHTML;
@@ -103,10 +128,6 @@ console.log(win_location_tz +' aktualna lokalizacja');
     var price = price_raw.match(/^\d{1,}.*,\d{1,}/)[0].replace( '&nbsp;','' );
     // set price to GM
      GM_setValue('price', price);
-
-
-
-
 
 
 
@@ -145,19 +166,23 @@ console.log(win_location_tz +' aktualna lokalizacja');
 
 
 
-     // console logs for testing
+    // console logs for testing
 
-  //  console.log( title );
-  //  console.log( price );
-  //  console.log( descr_raw );
-  //  console.log( elementp );
+    //  console.log( title );
+    //  console.log( price );
+    //  console.log( descr_raw );
+    //  console.log( elementp );
 
 
 
     // done product scrpaping
     product_scrap = 1;
+    // window.close();
 
- 
+    // open OLX page
+    var url_olx_add = 'https://www.olx.pl/nowe-ogloszenie/';
+    window.open( url_olx_add , '_blank' );
+
  }
 
 
@@ -165,17 +190,19 @@ console.log(win_location_tz +' aktualna lokalizacja');
 }
 
 
+    twojazagroda();
+
 
 
 function olx(){
 
-      // open OLX page
+
+     //////// OLX PAGE ////////
+
+
+     // set OLX page
       var url_olx_add = 'https://www.olx.pl/nowe-ogloszenie/';
-      window.open( url_olx_add , '_blank' );
 
-                //////// OLX PAGE ////////
-
-     var url_olx_add = 'https://www.olx.pl/nowe-ogloszenie/';
      var olx_temp1 = false;
      var olx_temp2 = false;
      var olx_temp3 = false;
@@ -183,8 +210,9 @@ function olx(){
      var olx_ready = 0;
      var win_location_olx = null;
 
-        win_location_olx = window.location.href;
-
+     win_location_olx = window.location.href;
+     console.log(win_location_olx +' loklaizacja aktualna');
+     console.log(url_olx_add +' loklaizacja olx');
 
 
     if( win_location_olx == url_olx_add){
@@ -298,10 +326,15 @@ function olx(){
 
 
         function waitForOfferReady( time ) {
-           console.log(olx_ready);
+           console.log( olx_ready );
            if( olx_ready == 6 ){
              // waitForElementToDisplayAndClick( '#save', 1000 );
-              return;
+             // dodac kolejne przejscie dalej dla dodanego ogloszenia
+             //window.close();
+             // window.close();
+             GM_setValue( 'OLX_ready', '1' );
+             console.log(GM_getValue( 'OLX_ready' ));
+             return;
            }
            else {
               setTimeout( function() {
@@ -339,7 +372,7 @@ function olx(){
   //end of olx function
 }
 
-
+olx();
 
 
 
