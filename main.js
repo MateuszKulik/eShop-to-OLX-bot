@@ -34,7 +34,7 @@
      // init values
      var url_tz;
      // products array
-     var products_tz = ['https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278', 'https://www.twojazagroda.pl/pl/p/AGREGAT-PRADOTWORCZY-ESE-3200-P-2800W-230V/2745', 'https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278'];
+     var products_tz = ['https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278', 'https://www.twojazagroda.pl/pl/p/Glowka-kosy-ECO/1304', 'https://www.twojazagroda.pl/pl/p/AGREGAT-PRADOTWORCZY-ESE-3200-P-2800W-230V/2745'];
 
 
 
@@ -203,8 +203,8 @@ function olx(){
      win_location_olx = window.location.href;
 
      // console logs for debug
-     //console.log(win_location_olx +' loklaizacja aktualna');
-     //console.log(url_olx_add +' loklaizacja olx');
+     // console.log(win_location_olx +' loklaizacja aktualna');
+     // console.log(url_olx_add +' loklaizacja olx');
 
     // if at OLX page
     if( win_location_olx == url_olx_add){
@@ -214,6 +214,7 @@ function olx(){
        olx_ready++;
        document.getElementById( 'add-phone' ).value = '533 111 477';
        olx_ready++;
+       // click on select for category choose
        document.getElementById('targetrenderSelect1-0').click();
 
 
@@ -327,6 +328,14 @@ function olx(){
              // set variable for product done scrapping and added to olx
              GM_setValue( 'OLX_ready', '1' );
              // console.log(GM_getValue( 'OLX_ready' ));
+             //reset variables after product scrapping and adding it to OLX
+             GM_setValue('price', '');
+             GM_setValue('title', '');
+             GM_setValue('descr', '');
+             GM_setValue('img_file', '');
+             GM_setValue( 'pro_img', 'false' );
+             GM_setValue( 'url_tz', '' );
+             GM_setValue( 'OLX_ready', '' );
              window.close();
              return;
            }
