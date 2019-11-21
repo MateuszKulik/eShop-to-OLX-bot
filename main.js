@@ -34,7 +34,7 @@
      // init values
      var url_tz;
      // products array
-     var products_tz = ['https://www.twojazagroda.pl/pl/p/Bagnet-podwojny-hederu%2C-bez-stalki%2C-pasuje-do-Bizo/1278', 'https://www.twojazagroda.pl/pl/p/Glowka-kosy-ECO/1304', 'https://www.twojazagroda.pl/pl/p/AGREGAT-PRADOTWORCZY-ESE-3200-P-2800W-230V/2745'];
+     var products_tz = ['https://www.twojazagroda.pl/pl/p/Cylinderek-hamulcowy-22L-IVVI-ZETORC385-ZSM-URSUS-832279111UR/3094', '', ''];
 
 
 
@@ -323,8 +323,10 @@ function olx(){
            // console.log( olx_ready );
            // check if all steps of product adding to OLX are done (done number is 6)
            if( olx_ready == 6 ){
-             // waitForElementToDisplayAndClick( '#save', 1000 );
-             // dodac kolejne przejscie dalej dla dodanego ogloszenia
+             // save and go next
+             waitForElementToDisplayAndClick( '#save', 1000 );
+             //kolejne przejscie dalej bez promowania
+             waitForElementToDisplayAndClick( '.qa-button-promo-without', 1000 );
              // set variable for product done scrapping and added to olx
              GM_setValue( 'OLX_ready', '1' );
              // console.log(GM_getValue( 'OLX_ready' ));
