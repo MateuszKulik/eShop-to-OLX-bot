@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TZ Bot
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      1.0
 // @description  TwojaZagroda.pl bot to post oferts from eShop to OLX
 // @author       Mateusz Kulik
 // @match        https://www.twojazagroda.pl/*
@@ -34,8 +34,13 @@
      // init values
      var url_tz;
      // products array
-     var products_tz = ['https://www.twojazagroda.pl/pl/p/Cylinderek-hamulcowy-22L-IVVI-ZETORC385-ZSM-URSUS-832279111UR/3094', '', '', ''];
+    var products_tz = ['https://www.twojazagroda.pl/pl/p/Pierscien-Simmering-52X72X12-0089002903-9742400-ZETOR-GP-52-72-12-JS/3119','https://www.twojazagroda.pl/pl/p/Pompa-hamulcowa-Zetor-Czeska-62452711-72112717-78255045/3120','https://www.twojazagroda.pl/pl/p/Pompa-oleju-silnika-Zetor-Hylmet-49010732/3121','https://www.twojazagroda.pl/pl/p/Pompa-wspomagania-ukladu-kierowniczego-Zetor-70118320100/3124','https://www.twojazagroda.pl/pl/p/Pompa-zasilajaca-2-otwory-Zetor-IMP-933272IMP/3125','https://www.twojazagroda.pl/pl/p/Pompa-zasilajaca-2-otwory-Zetor-PL-933272PL/3126','https://www.twojazagroda.pl/pl/p/Pompa-zasilajaca-3-otwory-ST-ZETOR-IMP-933383-933201-IMP/3127','https://www.twojazagroda.pl/pl/p/Pompka-reczna-paliwa-M14x1%2C5-Zetor-93009209B14/3128'];
 
+    //empty array
+    //var products_tz = [];
+
+
+    //use this site to make array from links https://delim.co/#
 
 
 
@@ -105,10 +110,16 @@ function twojazagroda(){
     temp_name++;
 
     // get title
+    // trim spaces before and afer title and transform it to LoweCase
     var title = title_raw.trim().toLowerCase();
+    // make first letter UpperCase and join it
     title = title.charAt( 0 ).toUpperCase() + title.slice( 1 );
+    // replace in title over 4 numbers and stings after that to first space, replace to nothing
+    title = title.replace(/\d{4,}\/*\w*\/*\w*/g,'');
     // set title to GM
     GM_setValue('title', title);
+    // set raw title to GM
+    GM_setValue('title_raw', title_raw.trim());
 
 
 
@@ -197,6 +208,8 @@ function olx(){
      var olx_temp3 = false;
      var olx_temp4 = false;
      var olx_ready = 0;
+     // desc with title
+     var desc_full = null;
      var win_location_olx = null;
 
      // get acutal location
@@ -210,7 +223,8 @@ function olx(){
     if( win_location_olx == url_olx_add){
        document.getElementById( 'add-title' ).value = GM_getValue( 'title' );
        olx_ready++;
-       document.getElementById( 'add-description' ).value = GM_getValue( 'descr' );
+       desc_full = GM_getValue( 'title_raw' ) + '. ' + GM_getValue( 'descr' );
+       document.getElementById( 'add-description' ).value = desc_full;
        olx_ready++;
        document.getElementById( 'add-phone' ).value = '533 111 477';
        olx_ready++;
@@ -232,7 +246,6 @@ function olx(){
             }, time );
         }
     }
-
 
           // function for wait for price element and input value
 
@@ -324,21 +337,7 @@ function olx(){
            // check if all steps of product adding to OLX are done (done number is 6)
            if( olx_ready == 6 ){
              // save and go next
-             waitForElementToDisplayAndClick( '#save', 1000 );
-             //kolejne przejscie dalej bez promowania
-             waitForElementToDisplayAndClick( '.qa-button-promo-without', 1000 );
-             // set variable for product done scrapping and added to olx
-             GM_setValue( 'OLX_ready', '1' );
-             // console.log(GM_getValue( 'OLX_ready' ));
-             //reset variables after product scrapping and adding it to OLX
-             GM_setValue('price', '');
-             GM_setValue('title', '');
-             GM_setValue('descr', '');
-             GM_setValue('img_file', '');
-             GM_setValue( 'pro_img', 'false' );
-             GM_setValue( 'url_tz', '' );
-             GM_setValue( 'OLX_ready', '' );
-             window.close();
+             waitForElementToDisplayAndClick( '#save.cfff', 1000 );
              return;
            }
            else {
@@ -368,7 +367,7 @@ function olx(){
         }
 
         // check if product is added to OLX
-         waitForOfferReady( 1000 );
+       waitForOfferReady( 1000 );
 
 
 //end if lokalizacja olx
@@ -384,6 +383,82 @@ olx();
 
 
 
+
+
+
+    function olx_success(){
+
+
+     //////// OLX SUCCESS PAGE ////////
+
+
+     // get acutal location
+    var win_location_olx = window.location.href;
+
+
+    // if at OLX page
+    if( win_location_olx.search(/(bundles\/promote)*/g) === 0 ){
+
+
+
+        // function for wait for element and click it
+
+        function waitForElementToDisplayAndClick( selector, time ) {
+        if( document.querySelector( selector )!= null) {
+            document.querySelector( selector ).click();
+            return;
+        }
+        else {
+            setTimeout( function() {
+                waitForElementToDisplayAndClick( selector, time );
+            }, time );
+        }
+    }
+
+         //kolejne przejscie dalej bez promowania
+         waitForElementToDisplayAndClick( '.qa-button-promo-without', 1000 );
+
+
+
+
+         // function for wait for element and click it - final function
+
+        function waitForElementToDisplayAndClickFinish( selector, time ) {
+        if( document.querySelector( selector )!= null) {
+            document.querySelector( selector ).click();
+            // set variable for product done scrapping and added to olx
+            GM_setValue( 'OLX_ready', '1' );
+            // console.log(GM_getValue( 'OLX_ready' ));
+            //reset variables after product scrapping and adding it to OLX
+            GM_setValue('price', '');
+            GM_setValue('title', '');
+            GM_setValue('descr', '');
+            GM_setValue('img_file', '');
+            GM_setValue( 'pro_img', 'false' );
+            GM_setValue( 'url_tz', '' );
+            GM_setValue( 'OLX_ready', '' );
+            GM_setValue('title_raw', '');
+            window.close();
+            return;
+        }
+        else {
+            setTimeout( function() {
+                waitForElementToDisplayAndClickFinish( selector, time );
+            }, time );
+        }
+    }
+
+             //potwierdzenie dodania ogloszenia i reset parametrow, zamkniecie strony
+             waitForElementToDisplayAndClickFinish( '.olx-confirm.olx-confirm--success', 1000 );
+
+
+    } //end if on olx success page
+
+
+    } //end olx_success function
+
+
+olx_success();
 
 
 })();
