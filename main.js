@@ -34,7 +34,7 @@
      // init values
      var url_tz;
      // products array
-     var products_tz = ['https://www.twojazagroda.pl/pl/p/Cylinderek-hamulcowy-22L-IVVI-ZETORC385-ZSM-URSUS-832279111UR/3094', '', ''];
+     var products_tz = ['https://www.twojazagroda.pl/pl/p/Cylinderek-hamulcowy-22L-IVVI-ZETORC385-ZSM-URSUS-832279111UR/3094', '', '', ''];
 
 
 
