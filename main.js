@@ -4,7 +4,10 @@
 // @version      1.0
 // @description  TwojaZagroda.pl bot to post oferts from eShop to OLX
 // @author       Mateusz Kulik
-// @match        https://www.twojazagroda.pl/*
+// @match        http*://twojazagroda.pl/*
+// @match        http*://www.twojazagroda.pl/*
+// @match        http*://olx.pl/*
+// @match        http*://www.olx.pl/*
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_deleteValue
@@ -34,10 +37,10 @@
      // init values
      var url_tz;
      // products array
-    var products_tz = ['https://www.twojazagroda.pl/pl/p/Pierscien-Simmering-52X72X12-0089002903-9742400-ZETOR-GP-52-72-12-JS/3119','https://www.twojazagroda.pl/pl/p/Pompa-hamulcowa-Zetor-Czeska-62452711-72112717-78255045/3120','https://www.twojazagroda.pl/pl/p/Pompa-oleju-silnika-Zetor-Hylmet-49010732/3121','https://www.twojazagroda.pl/pl/p/Pompa-wspomagania-ukladu-kierowniczego-Zetor-70118320100/3124','https://www.twojazagroda.pl/pl/p/Pompa-zasilajaca-2-otwory-Zetor-IMP-933272IMP/3125','https://www.twojazagroda.pl/pl/p/Pompa-zasilajaca-2-otwory-Zetor-PL-933272PL/3126','https://www.twojazagroda.pl/pl/p/Pompa-zasilajaca-3-otwory-ST-ZETOR-IMP-933383-933201-IMP/3127','https://www.twojazagroda.pl/pl/p/Pompka-reczna-paliwa-M14x1%2C5-Zetor-93009209B14/3128'];
+     var products_tz = [''];
 
-    //empty array
-    //var products_tz = [];
+     //empty array
+     //var products_tz = [];
 
 
     //use this site to make array from links https://delim.co/#
@@ -116,6 +119,8 @@ function twojazagroda(){
     title = title.charAt( 0 ).toUpperCase() + title.slice( 1 );
     // replace in title over 4 numbers and stings after that to first space, replace to nothing
     title = title.replace(/\d{4,}\/*\w*\/*\w*/g,'');
+    // replace in title producents name to First letter UpperCase
+    title = title.replace(/zetor/g,'Zetor').replace(/ursus/g,'Ursus');
     // set title to GM
     GM_setValue('title', title);
     // set raw title to GM
@@ -221,8 +226,6 @@ function olx(){
 
     // if at OLX page
     if( win_location_olx == url_olx_add){
-       document.getElementById( 'add-title' ).value = GM_getValue( 'title' );
-       olx_ready++;
        desc_full = GM_getValue( 'title_raw' ) + '. ' + GM_getValue( 'descr' );
        document.getElementById( 'add-description' ).value = desc_full;
        olx_ready++;
@@ -350,11 +353,17 @@ function olx(){
 
         // call functions for product paremeters
 
+        //choose Rolnictwo category
         waitForElementToDisplayAndClick( '.cat-icon-757', 1000 );
-        waitForElementToDisplayAndClick( '[data-category="765"]', 2000 );
+        //choose Czesci do maszyn rolniczych subcategory
+        waitForElementToDisplayAndClick( '[data-category="1265"]', 2000 );
         waitForPrice( '.paramPriceInput', 1000 );
         waitForOfferType( '#targetid_private_business a', 1000 );
         waitForOfferTypeBusiness( '#targetid_private_business a', 1000 );
+
+        //add title - it must be here (that low) to properly choose category and subcategory - if title will be filled out earlier OLX will suggest and limit categories
+        document.getElementById( 'add-title' ).value = GM_getValue( 'title' );
+        olx_ready++;
 
         // if product has image
         if( GM_getValue('pro_img') == 'true' ) {
